@@ -1,5 +1,5 @@
 import { createFetch, UseFetchReturn, MaybeRef, isObject } from '@vueuse/core'
-import { requestTimeout, appMessage } from '~/utils'
+import { requestTimeout } from '~/utils'
 import { stringifyQuery, LocationQueryRaw } from 'vue-router'
 
 const baseUrl = import.meta.env.MODE === 'production' ? 'http://8.136.112.243:8000' : '/devServer'
@@ -10,8 +10,7 @@ const useRequest = createFetch({
     immediate: false,
     timeout: requestTimeout,
     onFetchError({ data, error }) {
-      console.error(error)
-      appMessage('error', data)
+      window.$message.error(error)
 
       return { data, error }
     },

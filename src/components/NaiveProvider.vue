@@ -10,9 +10,10 @@
 </template>
 
 <script lang="ts" setup>
-const registerNaiveTools = () => {
-  window.$message = useMessage()
-  window.$dialog = useDialog()
+import { setupMessage } from '~/utils'
+function registerNaiveTools() {
+  // @ts-ignore
+  window.$message = setupMessage(useMessage())
 }
 
 const NaiveProviderContent = defineComponent({

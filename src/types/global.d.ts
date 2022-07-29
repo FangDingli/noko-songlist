@@ -1,8 +1,8 @@
-import type { messageProviderProps, dialogProviderProps } from 'naive-ui'
+import type { messageProviderProps, dialogProviderProps, MessageProviderInst } from 'naive-ui'
 
 declare global {
   interface Window {
-    $message: messageProviderProps
+    $message: MessageProviderInst
     $dialog: dialogProviderProps
   }
 }
