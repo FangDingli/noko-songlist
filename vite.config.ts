@@ -17,7 +17,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/devServer': {
-        target: 'http://8.136.112.243:8000', // here is dev server host
+        target: 'http://47.100.61.119', // here is dev server host
         changeOrigin: true,
         rewrite: path => path.replace(/^\/devServer/, ''),
       },

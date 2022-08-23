@@ -1,18 +1,12 @@
-import {
-  defineConfig,
-  presetAttributify,
-  presetUno,
-  presetIcons,
-} from 'unocss'
+import { defineConfig, presetAttributify, presetUno, presetIcons } from 'unocss'
 
 export default defineConfig({
-  shortcuts: [],
-  theme: {
-
-  },
-  presets: [
-    presetUno(),
-    presetIcons(),
-    presetAttributify(),
+  shortcuts: [
+    {
+      'sl-text': 'text-white ',
+    },
   ],
+  rules: [],
+  theme: {},
+  presets: [presetUno(), presetIcons(), presetAttributify()],
 })

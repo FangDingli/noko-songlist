@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'loli';
+  src: url('../assets/fonts/loli.ttf');
+}
+
+.font-loli {
+  font-family: loli;
+}
+
+body {
+  font-family: 'apple-system,BlinkMacSystemFont,Helvetica Neue,Helvetica,Segoe UI,Arial,Roboto,PingFang SC,Hiragino Sans GB,Microsoft Yahei,sans-serif';
+}
