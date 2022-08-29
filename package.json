@@ -19,6 +19,7 @@
     "@vueuse/core": "^9.1.0",
     "naive-ui": "^2.32.2",
     "vue": "^3.2.37",
+    "vue-clipboard3": "^2.0.0",
     "vue-router": "^4.1.4"
   },
   "devDependencies": {

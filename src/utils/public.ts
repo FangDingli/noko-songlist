@@ -76,3 +76,7 @@ export function setupMessage(NMessage: MessageProviderInst) {
 
   return new Message()
 }
+
+export function arrRandChoice<T>(arr: Array<T>): T {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
