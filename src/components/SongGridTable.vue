@@ -27,21 +27,14 @@
 
 <script lang="ts" setup>
 import type { ISongInfo } from '~/types/songlist'
-import useClipboard from 'vue-clipboard3'
+import { copy2Clipboard } from '~/utils'
 
 const props = withDefaults(defineProps<{ songs: ISongInfo[] | null }>(), {
   songs: () => [],
 })
 
-const { toClipboard } = useClipboard()
-
 const copy = async (name: string, singer: string) => {
-  try {
-    await toClipboard(`点歌 ${name} ${singer}`)
-    window.$message.success('复制成功，去直播间粘贴吧')
-  } catch (e) {
-    console.error(e)
-  }
+  await copy2Clipboard(`点歌 ${name} ${singer}`, `《${name}》 复制成功，快去直播间点歌吧！`)
 }
 </script>
 

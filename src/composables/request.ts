@@ -2,7 +2,7 @@ import { createFetch, UseFetchReturn, MaybeRef, isObject } from '@vueuse/core'
 import { requestTimeout } from '~/utils'
 import { stringifyQuery, LocationQueryRaw } from 'vue-router'
 
-const baseUrl = import.meta.env.MODE === 'production' ? 'http://47.100.61.119' : '/devServer'
+const baseUrl = import.meta.env.MODE === 'production' ? 'https://noko.fans' : '/devServer'
 
 const useRequest = createFetch({
   baseUrl,

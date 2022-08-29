@@ -1,4 +1,5 @@
 import type { MessageProviderInst, MessageReactive, MessageOptions } from 'naive-ui'
+import useClipboard from 'vue-clipboard3'
 
 export function setupMessage(NMessage: MessageProviderInst) {
   let loadingMessage: MessageReactive | null = null
@@ -79,4 +80,14 @@ export function setupMessage(NMessage: MessageProviderInst) {
 
 export function arrRandChoice<T>(arr: Array<T>): T {
   return arr[Math.floor(Math.random() * arr.length)]
+}
+
+const { toClipboard } = useClipboard()
+export async function copy2Clipboard(copyStr: string, successMsg: string) {
+  try {
+    await toClipboard(copyStr)
+    window.$message.create('success', successMsg, { type: 'success', duration: 4000 })
+  } catch (e) {
+    console.error(e)
+  }
 }

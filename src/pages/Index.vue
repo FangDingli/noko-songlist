@@ -1,25 +1,27 @@
 <template>
   <main class="bg_img noko_cursor z-0 bg-fixed pt-90vh bg-cover bg-no-repeat">
     <a href="https://live.bilibili.com/22882574" target="_blank">
-      <div class="w-10% z-2 fixed left-0 top-10%">
+      <div class="w-10% z-2 fixed left-0 top-10%" lt-sm="invisible">
         <img src="../assets/image/logo.png" w-full alt="" />
       </div>
     </a>
 
     <div class="z-1 bg-blue bg-op-20 backdrop-blur-20px min-h-screen">
       <div class="w-80% m-x-auto lt-sm:w-full">
-        <NokoCompConfig grid="~ cols-[2fr_1fr_1fr_1fr] lt-sm:cols-[2fr_1fr] gap-2" m="y-2">
-          <div class="w-80% p-y-1">
-            <NInput v-model:value="searchValue" placeholder="输入歌名或歌手搜索"></NInput>
-          </div>
-          <div class="w-80% p-y-1">
-            <NButton class="mr-1" type="primary" @click="handleRandomClick">盲盒点歌</NButton>
-            <NButton type="default" color="#F4F6F6" textColor="black" @click="filterList = data"
+        <NokoCompConfig grid="~ cols-[2fr_1fr_1fr_1fr] lt-sm:cols-[2fr_1fr] gap-4" m="y-2" p="y-2">
+          <NInput v-model:value="searchValue" round placeholder="输入歌名或歌手搜索"></NInput>
+
+          <NButton class="mr-1" type="primary" round @click="handleRandomClick">盲盒点歌</NButton>
+          <!-- <NButton type="default" color="#F4F6F6" textColor="black" @click="filterList = data"
               >显示全部</NButton
-            >
+            > -->
+
+          <div lt-sm="invisible">
+            <NSelect class="songlist_selection" placeholder="请选择语言"></NSelect>
           </div>
-          <div class="w-80% p-y-1"><NSelect placeholder="请选择语言"></NSelect></div>
-          <div class="w-80% p-y-1"><NSelect placeholder="请选择风格"></NSelect></div>
+          <div lt-sm="invisible">
+            <NSelect class="songlist_selection" placeholder="请选择风格"></NSelect>
+          </div>
         </NokoCompConfig>
         <SongGridTable :songs="filterList"></SongGridTable>
         <div v-show="!filterList || filterList.length === 0" text="center white 20px lt-sm:16px">
@@ -36,7 +38,7 @@ import NokoCompConfig from '~/components/NokoCompConfig.vue'
 import { useGet } from '~/composables/request'
 import type { ISongInfo } from '~/types/songlist'
 import { useFilterByNameAndSinger } from '~/composables/songlist'
-import { arrRandChoice } from '~/utils'
+import { arrRandChoice, copy2Clipboard } from '~/utils'
 
 const { data, execute } = useGet<ISongInfo[]>('/songlist')
 
@@ -63,8 +65,12 @@ watchDebounced(
   { debounce: 500, maxWait: 1500 }
 )
 
-const handleRandomClick = () => {
-  filterList.value = [arrRandChoice<ISongInfo>(data.value!)]
+const handleRandomClick = async () => {
+  const result = arrRandChoice<ISongInfo>(data.value!)
+  await copy2Clipboard(
+    `点歌 ${result.title} ${result.artist}`,
+    `《${result.title}》 复制成功，快去直播间点歌吧！`
+  )
 }
 </script>
 
