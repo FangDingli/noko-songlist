@@ -66,12 +66,8 @@ export function setupMessage(NMessage: MessageProviderInst) {
       NMessage.destroyAll()
     }
 
-    create(
-      type: MessageReactive['type'],
-      content: MessageReactive['content'],
-      option = {} as MessageOptions
-    ) {
-      this.showMessage(type, content, option)
+    create(content: MessageReactive['content'], option = {} as MessageOptions) {
+      this.showMessage(option.type || 'default', content, option)
     }
   }
 
@@ -86,7 +82,7 @@ const { toClipboard } = useClipboard()
 export async function copy2Clipboard(copyStr: string, successMsg: string) {
   try {
     await toClipboard(copyStr)
-    window.$message.create('success', successMsg, { type: 'success', duration: 4000 })
+    window.$message.create(successMsg, { type: 'success', duration: 4000 })
   } catch (e) {
     console.error(e)
   }
