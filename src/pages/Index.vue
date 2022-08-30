@@ -1,5 +1,8 @@
 <template>
-  <main class="bg_img noko_cursor z-0 bg-fixed pt-90vh bg-cover bg-no-repeat">
+  <main
+    class="bg_img noko_cursor z-0 bg-fixed pt-90vh bg-cover bg-no-repeat"
+    :class="{ bg_img_mobile: isSmallScreen }"
+  >
     <a href="https://live.bilibili.com/22882574" target="_blank">
       <div class="w-10% z-2 fixed left-0 top-10%" lt-sm="invisible">
         <img src="../assets/image/logo.png" w-full alt="" />
@@ -16,10 +19,10 @@
               >显示全部</NButton
             > -->
 
-          <div lt-sm="invisible">
+          <div lt-sm="hidden">
             <NSelect class="songlist_selection" placeholder="请选择语言"></NSelect>
           </div>
-          <div lt-sm="invisible">
+          <div lt-sm="hidden">
             <NSelect class="songlist_selection" placeholder="请选择风格"></NSelect>
           </div>
         </NokoCompConfig>
@@ -72,11 +75,16 @@ const handleRandomClick = async () => {
     `《${result.title}》 复制成功，快去直播间点歌吧！`
   )
 }
+
+const isSmallScreen = useMediaQuery('(max-width: 639.9px)')
 </script>
 
 <style scoped>
 .bg_img {
-  background-image: url('~/assets/image/songlist_bg1.png');
+  background-image: url('~/assets/image/songlist_bg1.jpg');
+}
+.bg_img_mobile {
+  background-position: top 0 left 75%;
 }
 .noko_cursor {
   cursor: url('~/assets/image/mousecursor.png'), auto;
