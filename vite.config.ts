@@ -17,7 +17,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/devServer': {
-        target: 'https://noko.fans', // here is dev server host
+        target: 'https://noko.fans/song', // here is dev server host
         changeOrigin: true,
         rewrite: path => path.replace(/^\/devServer/, ''),
       },

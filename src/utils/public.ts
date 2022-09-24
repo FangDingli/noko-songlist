@@ -1,5 +1,7 @@
 import type { MessageProviderInst, MessageReactive, MessageOptions } from 'naive-ui'
 import useClipboard from 'vue-clipboard3'
+import { useGet } from '~/composables/request'
+import type { SongTypeOpts, SongBaseTrait } from '~/types/songlist'
 
 export function setupMessage(NMessage: MessageProviderInst) {
   let loadingMessage: MessageReactive | null = null
@@ -86,4 +88,33 @@ export async function copy2Clipboard(copyStr: string, successMsg: string) {
   } catch (e) {
     console.error(e)
   }
+}
+
+export async function getAllSongInfo() {
+  const { data, execute } = useGet<SongTypeOpts[]>('dict')
+  await execute()
+  const languageList: SongTypeOpts[] = []
+  const typeList: SongTypeOpts[] = []
+  if (data.value) {
+    data.value!.forEach(item => {
+      if (item.type === 0) {
+        languageList.push(item)
+      } else {
+        typeList.push(item)
+      }
+    })
+  }
+  return { languageList, typeList }
+}
+
+export function getDataByIds(id: number[], originData: SongBaseTrait[]) {
+  const checkedItems: SongBaseTrait[] = []
+  id.forEach(item => {
+    const temp = originData.find(n => n.id === item)
+    if (temp) {
+      checkedItems.push(temp)
+    }
+  })
+
+  return checkedItems
 }

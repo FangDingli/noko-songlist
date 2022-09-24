@@ -1,7 +1,14 @@
-import type { ISongInfo } from '~/types/songlist'
+import type { SongBaseTrait } from '~/types/songlist'
 
-export const useFilterByNameAndSinger = (songlist: ISongInfo[], searchStr: string) => {
-  const result: ISongInfo[] = []
+export const useFilterByNameAndSinger = (
+  songlist: SongBaseTrait[],
+  searchStr: FilterHandlerParam2
+) => {
+  const result: SongBaseTrait[] = []
+
+  if (!searchStr || searchStr === '') {
+    return songlist
+  }
 
   songlist.forEach(item => {
     const str = item.title + item.artist
@@ -13,8 +20,12 @@ export const useFilterByNameAndSinger = (songlist: ISongInfo[], searchStr: strin
   return result
 }
 
-export const useFilterByLanguage = (songlist: ISongInfo[], searchStr: string) => {
-  const result: ISongInfo[] = []
+export const useFilterByLanguage = (songlist: SongBaseTrait[], searchStr: FilterHandlerParam2) => {
+  const result: SongBaseTrait[] = []
+
+  if (!searchStr || searchStr === '') {
+    return songlist
+  }
 
   songlist.forEach(item => {
     if (item.language === searchStr) {
@@ -25,8 +36,12 @@ export const useFilterByLanguage = (songlist: ISongInfo[], searchStr: string) =>
   return result
 }
 
-export const useFilterByType = (songlist: ISongInfo[], searchStr: string) => {
-  const result: ISongInfo[] = []
+export const useFilterByType = (songlist: SongBaseTrait[], searchStr: FilterHandlerParam2) => {
+  const result: SongBaseTrait[] = []
+
+  if (!searchStr || searchStr === '') {
+    return songlist
+  }
 
   songlist.forEach(item => {
     if (item.type.indexOf(searchStr) !== -1) {
@@ -35,4 +50,16 @@ export const useFilterByType = (songlist: ISongInfo[], searchStr: string) => {
   })
 
   return result
+}
+
+type FilterTableDataAction = 'searchbar' | 'languageSelect' | 'typeSelect'
+type FilterHandlerParam2 = string | undefined | null
+
+export const tableFilterHandler: Record<
+  FilterTableDataAction,
+  (a: SongBaseTrait[], b: FilterHandlerParam2) => SongBaseTrait[]
+> = {
+  searchbar: (a: SongBaseTrait[], b: FilterHandlerParam2) => useFilterByNameAndSinger(a, b),
+  languageSelect: (a: SongBaseTrait[], b: FilterHandlerParam2) => useFilterByLanguage(a, b),
+  typeSelect: (a: SongBaseTrait[], b: FilterHandlerParam2) => useFilterByType(a, b),
 }

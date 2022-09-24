@@ -22,17 +22,17 @@
     >
       <div class="truncate pl-5%">{{ item.title }}</div>
       <div class="truncate">{{ item.artist }}</div>
-      <div class="truncate" lt-sm="invisible">{{ item.language }}</div>
-      <div class="truncate" lt-sm="invisible">{{ item.type }}</div>
+      <div class="truncate" lt-sm="text-12px pl-5%">{{ item.language }}</div>
+      <div class="truncate" lt-sm="text-12px">{{ item.type }}</div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { ISongInfo } from '~/types/songlist'
+import type { SongBaseTrait } from '~/types/songlist'
 import { copy2Clipboard } from '~/utils'
 
-const props = withDefaults(defineProps<{ songs: ISongInfo[] | null }>(), {
+const props = withDefaults(defineProps<{ songs: SongBaseTrait[] | null }>(), {
   songs: () => [],
 })
 

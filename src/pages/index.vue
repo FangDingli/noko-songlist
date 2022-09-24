@@ -20,56 +20,62 @@
             > -->
 
           <div lt-sm="hidden">
-            <NSelect class="songlist_selection" placeholder="请选择语言"></NSelect>
+            <NSelect
+              v-model:value="languageSelectd"
+              class="songlist_selection"
+              placeholder="请选择语言"
+              :options="languageOptList"
+              labelField="name"
+              valueField="name"
+              clearable
+              @update:value="data = tableFilterHandler.languageSelect(originData, languageSelectd)"
+            ></NSelect>
           </div>
           <div lt-sm="hidden">
-            <NSelect class="songlist_selection" placeholder="请选择风格"></NSelect>
+            <NSelect
+              v-model:value="typeSelected"
+              class="songlist_selection"
+              placeholder="请选择风格"
+              :options="typeOptList"
+              labelField="name"
+              valueField="name"
+              clearable
+              @update:value="data = tableFilterHandler.typeSelect(originData, typeSelected)"
+            ></NSelect>
           </div>
         </NokoCompConfig>
-        <SongGridTable :songs="filterList"></SongGridTable>
-        <div v-show="!filterList || filterList.length === 0" text="center white 20px lt-sm:16px">
-          查不到捏~
-        </div>
+        <SongGridTable :songs="data"></SongGridTable>
+        <div v-show="!data || data.length === 0" text="center white 20px lt-sm:16px">查不到捏~</div>
       </div>
     </div>
   </main>
 </template>
 
 <script lang="ts" setup>
+import { useGetSonglist, useGetSongOptList } from '~/composables/crud'
 import SongGridTable from '~/components/SongGridTable.vue'
 import NokoCompConfig from '~/components/NokoCompConfig.vue'
-import { useGet } from '~/composables/request'
-import type { ISongInfo } from '~/types/songlist'
-import { useFilterByNameAndSinger } from '~/composables/songlist'
+import type { SongBaseTrait } from '~/types/songlist'
+import { tableFilterHandler } from '~/composables/songlist'
 import { arrRandChoice, copy2Clipboard } from '~/utils'
 
-const { data, execute } = useGet<ISongInfo[]>('/songlist')
-
-let filterList = ref<ISongInfo[] | null>([])
-
-const getList = async () => {
-  await execute()
-  filterList.value = data.value
-}
-
-getList()
+const { data, originData } = useGetSonglist()
+const { typeOptList, languageOptList } = useGetSongOptList()
 
 let searchValue = ref('')
+let languageSelectd = ref(null)
+let typeSelected = ref(null)
 
 watchDebounced(
   searchValue,
   () => {
-    if (searchValue.value !== '') {
-      filterList.value = useFilterByNameAndSinger(data.value!, searchValue.value)
-    } else {
-      filterList.value = data.value
-    }
+    data.value = tableFilterHandler.searchbar(originData.value, searchValue.value)
   },
   { debounce: 500, maxWait: 1500 }
 )
 
 const handleRandomClick = async () => {
-  const result = arrRandChoice<ISongInfo>(data.value!)
+  const result = arrRandChoice<SongBaseTrait>(data.value!)
   await copy2Clipboard(
     `点歌 ${result.title} ${result.artist}`,
     `《${result.title}》 复制成功，快去直播间点歌吧！`

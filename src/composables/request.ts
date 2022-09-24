@@ -2,7 +2,7 @@ import { createFetch, UseFetchReturn, MaybeRef, isObject } from '@vueuse/core'
 import { requestTimeout } from '~/utils'
 import { stringifyQuery, LocationQueryRaw } from 'vue-router'
 
-const baseUrl = import.meta.env.MODE === 'production' ? 'https://noko.fans' : '/devServer'
+const baseUrl = import.meta.env.MODE === 'production' ? 'https://noko.fans/song' : '/devServer'
 
 const useRequest = createFetch({
   baseUrl,
@@ -10,7 +10,7 @@ const useRequest = createFetch({
     immediate: false,
     timeout: requestTimeout,
     onFetchError({ data, error }) {
-      window.$message.error(error)
+      window.$message.error(`${data.path} ${data.status} ${data.error} ${data.message}`)
 
       return { data, error }
     },
