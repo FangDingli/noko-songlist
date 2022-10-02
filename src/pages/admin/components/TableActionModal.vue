@@ -74,6 +74,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 interface Emits {
   (e: 'update:visible', visible: boolean): void
+  (e: 'refresh'): void
 }
 
 const emit = defineEmits<Emits>()
@@ -189,5 +190,6 @@ const handleSubmitClick = async () => {
   if (data.value === true) {
     window.$message.success('操作成功')
   }
+  emit('refresh')
 }
 </script>

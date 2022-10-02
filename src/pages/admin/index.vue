@@ -87,8 +87,11 @@
         ></NSelect>
       </div>
       <div>
-        <NButton type="primary" :loading="batchLoading" class="mr-5" @click="submitBatch"
-          >提交更改</NButton
+        <NButton type="primary" :loading="batchLoading" class="mr-5" @click="submitBatch">
+          <template #icon>
+            <i i-ant-design-cloud-upload-outlined></i>
+          </template>
+          提交更改</NButton
         >
       </div>
       <div>
@@ -117,6 +120,7 @@
     :editData="editData"
     :languageList="state.songlistState.languageOptList"
     :typeList="state.songlistState.typeOptList"
+    @refresh="state.getSonglist"
   ></TableActionModal>
 
   <TagManageModal
@@ -292,6 +296,7 @@ const handleMultiDel = () => {
         window.$message.success('操作成功')
       }
       d.loading = false
+      state.getSonglist()
       return true
     },
   })
@@ -313,10 +318,12 @@ const submitBatch = async () => {
       item.type = resultTypeArr.join()
     }
   })
+  batchArr.value.songUpdate = items
   await execute()
   // @ts-ignore
   if (batchRes.value === true) {
     window.$message.success('操作成功')
   }
+  state.getSonglist()
 }
 </script>

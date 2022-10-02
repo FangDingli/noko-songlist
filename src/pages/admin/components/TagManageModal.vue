@@ -2,10 +2,10 @@
   <NModal v-model:show="modalVisible" preset="card" class="w-50%">
     <NSpin :show="props.isLoading">
       <div class="mb-5 flex items-center flex-wrap">
-        <NDynamicTags v-model:value="languageTagList"></NDynamicTags>
+        <NDynamicTags v-model:value="languageTagList" type="primary"></NDynamicTags>
       </div>
       <div class="flex items-center flex-wrap">
-        <NDynamicTags v-model:value="typeTagList"></NDynamicTags>
+        <NDynamicTags v-model:value="typeTagList" type="info"></NDynamicTags>
       </div>
     </NSpin>
   </NModal>
