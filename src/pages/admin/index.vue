@@ -1,13 +1,13 @@
 <route lang="json">
 {
   "meta": {
-    "isAuth": true
+    "requireAuth": true
   }
 }
 </route>
 
 <template>
-  <div class="h-10vh w-full" flex="~ col">
+  <div class="h-10vh w-full overflow-auto" flex="~ col">
     <div class="justify-around items-center m-y-3" flex="~">
       <div>
         <NButton type="primary" @click="addSong">
@@ -24,13 +24,18 @@
         <NSelect
           v-model:value="languageSelectd"
           placeholder="请选择语言"
-          :options="languageOptList"
+          :options="state.songlistState.languageOptList"
           labelField="name"
           valueField="name"
           clearable
-          @update:value="data = tableFilterHandler.languageSelect(originData, languageSelectd)"
+          @update:value="
+            state.songlistState.searchedSong = tableFilterHandler.languageSelect(
+              state.songlistState.originSong,
+              languageSelectd
+            )
+          "
         ></NSelect>
-        <NButton type="warning" secondary>
+        <NButton type="warning" secondary @click="tagManageModelVisible = true">
           <template #icon>
             <i i-ant-design-setting-outlined></i>
           </template>
@@ -41,13 +46,18 @@
         <NSelect
           v-model:value="typeSelected"
           placeholder="请选择风格"
-          :options="typeOptList"
+          :options="state.songlistState.typeOptList"
           labelField="name"
           valueField="name"
           clearable
-          @update:value="data = tableFilterHandler.typeSelect(originData, typeSelected)"
+          @update:value="
+            state.songlistState.searchedSong = tableFilterHandler.typeSelect(
+              state.songlistState.originSong,
+              typeSelected
+            )
+          "
         ></NSelect>
-        <NButton type="warning" secondary>
+        <NButton type="warning" secondary @click="tagManageModelVisible = true">
           <template #icon>
             <i i-ant-design-setting-outlined></i>
           </template>
@@ -61,7 +71,7 @@
         <NSelect
           v-model:value="batchSetLanguage"
           placeholder="统一设置歌曲语种"
-          :options="languageOptList"
+          :options="state.songlistState.languageOptList"
           labelField="name"
           valueField="name"
           clearable
@@ -71,7 +81,7 @@
         <NSelect
           v-model:value="batchSetType"
           placeholder="统一追加歌曲风格"
-          :options="typeOptList"
+          :options="state.songlistState.typeOptList"
           labelField="name"
           valueField="name"
         ></NSelect>
@@ -92,8 +102,8 @@
     </div>
   </div>
   <NDataTable
-    :loading="isFetching"
-    :data="data!"
+    :loading="state.songlistState.songlistLoading"
+    :data="state.songlistState.searchedSong"
     :columns="columns"
     virtualScroll
     :maxHeight="'88vh'"
@@ -105,20 +115,35 @@
     v-model:visible="actionModalVisible"
     v-model:type="modalType"
     :editData="editData"
-    :languageList="languageOptList"
-    :typeList="typeOptList"
+    :languageList="state.songlistState.languageOptList"
+    :typeList="state.songlistState.typeOptList"
   ></TableActionModal>
+
+  <TagManageModal
+    v-model:visible="tagManageModelVisible"
+    :languageList="state.songlistState.languageOptList"
+    :typeList="state.songlistState.typeOptList"
+    :isLoading="state.songlistState.optListLoading"
+    @refresh="state.getOptList"
+  ></TagManageModal>
 </template>
 
 <script lang="ts" setup>
-import { useGetSonglist, useGetSongOptList } from '~/composables/crud'
 import { tableFilterHandler } from '~/composables/songlist'
 import type { SongBaseTrait } from '~/types/songlist'
 import type { DataTableColumns } from 'naive-ui'
 import { NButton, NPopconfirm } from 'naive-ui'
 import TableActionModal from './components/TableActionModal.vue'
+import TagManageModal from './components/TagManageModal.vue'
 import { usePost } from '~/composables/request'
 import { getDataByIds } from '~/utils'
+import { useSonglistState } from '~/store'
+
+const state = useSonglistState()
+state.getSonglist()
+state.getOptList()
+
+const tagManageModelVisible = ref(false)
 
 type ModalType = 'add' | 'edit'
 
@@ -213,9 +238,6 @@ const columns: DataTableColumns<SongBaseTrait> = [
   },
 ]
 
-const { data, originData, isFetching } = useGetSonglist()
-const { typeOptList, languageOptList } = useGetSongOptList()
-
 let searchValue = ref('')
 let languageSelectd = ref(null)
 let typeSelected = ref(null)
@@ -223,7 +245,10 @@ let typeSelected = ref(null)
 watchDebounced(
   searchValue,
   () => {
-    data.value = tableFilterHandler.searchbar(originData.value, searchValue.value)
+    state.songlistState.searchedSong = tableFilterHandler.searchbar(
+      state.songlistState.originSong,
+      searchValue.value
+    )
   },
   { debounce: 500, maxWait: 1500 }
 )
@@ -259,7 +284,7 @@ const handleMultiDel = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       d.loading = true
-      const items = getDataByIds(checkedKeys.value, originData.value)
+      const items = getDataByIds(checkedKeys.value, state.songlistState.originSong)
       batchArr.value.songDel = items
       await execute()
       // @ts-ignore
@@ -276,7 +301,7 @@ const batchSetLanguage = ref(null)
 const batchSetType = ref<string[]>([])
 
 const submitBatch = async () => {
-  const items = getDataByIds(checkedKeys.value, originData.value)
+  const items = getDataByIds(checkedKeys.value, state.songlistState.originSong)
   items.forEach(item => {
     if (batchSetLanguage.value) {
       item.language = batchSetLanguage.value

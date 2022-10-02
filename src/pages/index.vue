@@ -24,11 +24,16 @@
               v-model:value="languageSelectd"
               class="songlist_selection"
               placeholder="请选择语言"
-              :options="languageOptList"
+              :options="state.songlistState.languageOptList"
               labelField="name"
               valueField="name"
               clearable
-              @update:value="data = tableFilterHandler.languageSelect(originData, languageSelectd)"
+              @update:value="
+                state.songlistState.searchedSong = tableFilterHandler.languageSelect(
+                  state.songlistState.originSong,
+                  languageSelectd
+                )
+              "
             ></NSelect>
           </div>
           <div lt-sm="hidden">
@@ -36,31 +41,47 @@
               v-model:value="typeSelected"
               class="songlist_selection"
               placeholder="请选择风格"
-              :options="typeOptList"
+              :options="state.songlistState.typeOptList"
               labelField="name"
               valueField="name"
               clearable
-              @update:value="data = tableFilterHandler.typeSelect(originData, typeSelected)"
+              @update:value="
+                state.songlistState.searchedSong = tableFilterHandler.typeSelect(
+                  state.songlistState.originSong,
+                  typeSelected
+                )
+              "
             ></NSelect>
           </div>
         </NokoCompConfig>
-        <SongGridTable :songs="data"></SongGridTable>
-        <div v-show="!data || data.length === 0" text="center white 20px lt-sm:16px">查不到捏~</div>
+        <SongGridTable :songs="state.songlistState.searchedSong"></SongGridTable>
+        <div
+          v-show="
+            !state.songlistState.searchedSong || state.songlistState.searchedSong.length === 0
+          "
+          text="center white 20px lt-sm:16px"
+        >
+          查不到捏~
+        </div>
       </div>
     </div>
   </main>
 </template>
 
 <script lang="ts" setup>
-import { useGetSonglist, useGetSongOptList } from '~/composables/crud'
+import { useSonglistState } from '~/store'
 import SongGridTable from '~/components/SongGridTable.vue'
 import NokoCompConfig from '~/components/NokoCompConfig.vue'
 import type { SongBaseTrait } from '~/types/songlist'
 import { tableFilterHandler } from '~/composables/songlist'
 import { arrRandChoice, copy2Clipboard } from '~/utils'
 
-const { data, originData } = useGetSonglist()
-const { typeOptList, languageOptList } = useGetSongOptList()
+/* const { data, originData } = useGetSonglist()
+const { typeOptList, languageOptList } = useGetSongOptList() */
+
+const state = useSonglistState()
+state.getSonglist()
+state.getOptList()
 
 let searchValue = ref('')
 let languageSelectd = ref(null)
@@ -69,13 +90,16 @@ let typeSelected = ref(null)
 watchDebounced(
   searchValue,
   () => {
-    data.value = tableFilterHandler.searchbar(originData.value, searchValue.value)
+    state.songlistState.searchedSong = tableFilterHandler.searchbar(
+      state.songlistState.originSong,
+      searchValue.value
+    )
   },
   { debounce: 500, maxWait: 1500 }
 )
 
 const handleRandomClick = async () => {
-  const result = arrRandChoice<SongBaseTrait>(data.value!)
+  const result = arrRandChoice<SongBaseTrait>(state.songlistState.originSong)
   await copy2Clipboard(
     `点歌 ${result.title} ${result.artist}`,
     `《${result.title}》 复制成功，快去直播间点歌吧！`

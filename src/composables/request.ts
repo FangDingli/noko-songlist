@@ -1,6 +1,9 @@
 import { createFetch, UseFetchReturn, MaybeRef, isObject } from '@vueuse/core'
 import { requestTimeout } from '~/utils'
 import { stringifyQuery, LocationQueryRaw } from 'vue-router'
+// import { useGlobalState } from '~/store'
+
+// const state = useGlobalState()
 
 const baseUrl = import.meta.env.MODE === 'production' ? 'https://noko.fans/song' : '/devServer'
 
@@ -9,15 +12,32 @@ const useRequest = createFetch({
   options: {
     immediate: false,
     timeout: requestTimeout,
+
+    /* beforeFetch({ options }) {
+      options.headers = Object.assign(options.headers || {}, {
+        // Cookie: state.token,
+      })
+
+      return { options }
+    },
+
+    afterFetch({ data, response }) {
+
+      return { data, response }
+    }, */
+
     onFetchError({ data, error }) {
-      window.$message.error(`${data.path} ${data.status} ${data.error} ${data.message}`)
+      // window.$message.error(`${data.path} ${data.status} ${data.error} ${data.message}`)
+      if (data === "{'msg':'NO USER MSG'}" || data === "{'msg':'HAVE NO COOKIE'}") {
+        window.$message.error('登录失效，请重新登录')
+      }
 
       return { data, error }
     },
   },
   fetchOptions: {
     mode: 'cors',
-    credentials: 'omit',
+    credentials: 'include',
   },
 })
 
