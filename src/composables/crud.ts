@@ -4,6 +4,9 @@ import type { SongBaseTrait, SongTypeOpts } from '~/types/songlist'
 export const useGetSonglist = async () => {
   const { data, execute } = useGet<SongBaseTrait[]>('songlist').json()
   await execute()
+  data.value.forEach((item: SongBaseTrait, index: number) => {
+    item.orderNum = index + 1
+  })
   const searchedData = [...data.value]
   return { data, searchedData }
 }

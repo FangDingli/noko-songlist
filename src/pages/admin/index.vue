@@ -171,6 +171,12 @@ const columns: DataTableColumns<SongBaseTrait> = [
     type: 'selection',
   },
   {
+    title: '序号',
+    key: 'orderNum',
+    defaultSortOrder: false,
+    sorter: 'default',
+  },
+  {
     title: '歌名',
     key: 'title',
   },

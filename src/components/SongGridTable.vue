@@ -1,5 +1,5 @@
 <template>
-  <div grid="~ cols-1" class="font-loli" text="white 20px lt-sm:16px">
+  <div grid="~ cols-1" text="white 20px lt-sm:16px">
     <div
       grid="~ cols-[2fr_1fr_1fr_1fr] gap-2 lt-sm:cols-[2fr_1fr] lt-sm:gap-0"
       class="h-50px bg-blue bg-op-50"

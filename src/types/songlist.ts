@@ -4,6 +4,7 @@ export interface SongBaseTrait {
   artist: string
   language: string
   type: string
+  orderNum?: number
 }
 
 export interface SongTypeOpts {
