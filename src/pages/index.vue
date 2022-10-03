@@ -1,8 +1,5 @@
 <template>
-  <main
-    class="bg_img noko_cursor z-0 bg-fixed pt-90vh bg-cover bg-no-repeat"
-    :class="{ bg_img_mobile: isSmallScreen }"
-  >
+  <main class="bg_img noko_cursor z-0 bg-fixed pt-60vh bg-cover bg-no-repeat" lt-sm="pt-30vh">
     <a href="https://live.bilibili.com/22882574" target="_blank">
       <div class="w-10% z-2 fixed left-0 top-10%" lt-sm="invisible">
         <img src="../assets/image/logo.png" w-full alt="" />
@@ -100,22 +97,25 @@ watchDebounced(
 
 const handleRandomClick = async () => {
   const result = arrRandChoice<SongBaseTrait>(state.songlistState.originSong)
-  await copy2Clipboard(
-    `点歌 ${result.title} ${result.artist}`,
-    `《${result.title}》 复制成功，快去直播间点歌吧！`
-  )
+  const temp = `点歌 ${result.title} ${result.artist}`
+  if (temp.length > 20) {
+    await copy2Clipboard(temp, `《${result.title}》 复制成功，快去直播间点歌吧！`)
+  } else {
+    await copy2Clipboard(`点歌 ${result.title}`, `《${result.title}》 复制成功，快去直播间点歌吧！`)
+  }
 }
-
-const isSmallScreen = useMediaQuery('(max-width: 639.9px)')
 </script>
 
 <style scoped>
 .bg_img {
   background-image: url('~/assets/image/songlist_bg1.jpg');
 }
-.bg_img_mobile {
-  background-position: top 0 left 75%;
+@media screen and (max-width: 639.9px) {
+  .bg_img {
+    background-position: top 0 left 75%;
+  }
 }
+
 .noko_cursor {
   cursor: url('~/assets/image/mousecursor.png'), auto;
 }

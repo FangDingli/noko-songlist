@@ -26,7 +26,6 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 const props = defineProps<Props>()
-
 const modalVisible = computed({
   get() {
     return props.visible
