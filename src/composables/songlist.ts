@@ -28,7 +28,7 @@ export const useFilterByLanguage = (songlist: SongBaseTrait[], searchStr: Filter
   }
 
   songlist.forEach(item => {
-    if (item.language === searchStr) {
+    if (item.language.indexOf(searchStr) !== -1) {
       result.push(item)
     }
   })

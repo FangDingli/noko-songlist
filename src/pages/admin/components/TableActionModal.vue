@@ -21,7 +21,8 @@
           </NFormItemGridItem>
           <NFormItemGridItem :span="12" label="语言" path="languageMultiSelect">
             <NSelect
-              v-model:value="item.language"
+              v-model:value="item.languageMultiSelect"
+              multiple
               :options="languageList"
               labelField="name"
               valueField="name"
@@ -96,8 +97,10 @@ const modalVisible = computed({
   return text[props.type]
 }) */
 
+// 我还是建议语言为单选，但这里甲方要求多选（x）
 interface FormModel extends Partial<SongBaseTrait> {
   typeMultiSelect?: string[]
+  languageMultiSelect?: string[]
 }
 
 let autoIncreId = ref(0)
@@ -118,6 +121,7 @@ const createDefaultFormModel = (): FormModel => ({
   language: '',
   type: '',
   typeMultiSelect: [],
+  languageMultiSelect: [],
 })
 
 let formModel = ref<FormModel[]>([createDefaultFormModel()])
@@ -135,9 +139,14 @@ const addOrEditHandlers: Record<ModalType, () => void> = {
     if (props.editData) {
       handleUpdateFormModel(props.editData)
       if (props.editData.type.length > 0) {
-        formModel.value[0].typeMultiSelect = formModel.value[0].type?.split(',')
+        formModel.value[0].typeMultiSelect = formModel.value[0].type?.split(';')
       } else {
         formModel.value[0].typeMultiSelect = undefined
+      }
+      if (props.editData.language.length > 0) {
+        formModel.value[0].languageMultiSelect = formModel.value[0].language?.split(';')
+      } else {
+        formModel.value[0].languageMultiSelect = undefined
       }
     }
   },
@@ -164,7 +173,12 @@ const beforeUpload = () => {
     if (!item.typeMultiSelect || item.typeMultiSelect.length === 0) {
       item.type = ''
     } else {
-      item.type = item.typeMultiSelect?.join()
+      item.type = item.typeMultiSelect?.join(';')
+    }
+    if (!item.languageMultiSelect || item.languageMultiSelect.length === 0) {
+      item.language = ''
+    } else {
+      item.language = item.languageMultiSelect?.join(';')
     }
 
     if (submitKey === 'songAdd') {

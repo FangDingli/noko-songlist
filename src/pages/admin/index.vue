@@ -18,7 +18,10 @@
         </NButton>
       </div>
       <div class="w-30%">
-        <NInput v-model:value="searchValue" placeholder="输入歌名或歌手搜索"></NInput>
+        <NInput
+          v-model:value="searchValue"
+          :placeholder="`输入歌名或歌手搜索,总歌曲数:${state.songlistState.originSong.length || 0}`"
+        ></NInput>
       </div>
       <div class="w-20%" flex="~">
         <NSelect
@@ -175,6 +178,7 @@ const columns: DataTableColumns<SongBaseTrait> = [
     key: 'orderNum',
     defaultSortOrder: false,
     sorter: 'default',
+    width: '100px',
   },
   {
     title: '歌名',
