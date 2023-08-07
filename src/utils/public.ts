@@ -3,6 +3,8 @@ import useClipboard from 'vue-clipboard3'
 import { useGet } from '~/composables/request'
 import type { SongTypeOpts, SongBaseTrait } from '~/types/songlist'
 
+export const currentTheme = ref<any>(null)
+
 export function setupMessage(NMessage: MessageProviderInst) {
   let loadingMessage: MessageReactive | null = null
 
@@ -25,7 +27,7 @@ export function setupMessage(NMessage: MessageProviderInst) {
     showMessage(
       type: MessageReactive['type'],
       content: MessageReactive['content'],
-      option = {} as MessageOptions
+      option = {} as MessageOptions,
     ) {
       if (loadingMessage && loadingMessage.type === 'loading') {
         // 当前存在loadingMessage 直接替换

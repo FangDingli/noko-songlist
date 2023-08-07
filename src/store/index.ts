@@ -44,3 +44,24 @@ export const useSonglistState = createGlobalState((): stateFuncReturn => {
 
   return { songlistState, getSonglist, getOptList }
 })
+
+interface globalStateProps {
+  isDarkMode: boolean
+}
+
+interface globalStateFuncReturn {
+  globalState: globalStateProps
+  setDarkMode(mode: boolean): void
+}
+
+export const useGlobalState = createGlobalState((): globalStateFuncReturn => {
+  const globalState = reactive<globalStateProps>({
+    isDarkMode: false,
+  })
+
+  const setDarkMode = (mode: boolean) => {
+    globalState.isDarkMode = mode
+  }
+
+  return { globalState, setDarkMode }
+})

@@ -7,115 +7,126 @@
 </route>
 
 <template>
-  <div class="h-10vh w-full overflow-auto" flex="~ col">
-    <div class="justify-around items-center m-y-3" flex="~">
-      <div>
-        <NButton type="primary" @click="addSong">
-          <template #icon>
-            <i i-ant-design-plus-outlined></i>
-          </template>
-          新增
-        </NButton>
+  <NLayout class="h-100vh">
+    <div class="h-10vh w-full overflow-auto" flex="~ col">
+      <div class="justify-around items-center m-y-3" flex="~">
+        <div>
+          <NButton type="primary" @click="addSong">
+            <template #icon>
+              <i i-ant-design-plus-outlined></i>
+            </template>
+            新增
+          </NButton>
+        </div>
+        <div class="w-30%">
+          <NInput
+            v-model:value="searchValue"
+            :placeholder="`输入歌名或歌手搜索,总歌曲数:${
+              state.songlistState.originSong.length || 0
+            }`"
+          ></NInput>
+        </div>
+        <div class="w-20%" flex="~">
+          <NSelect
+            v-model:value="languageSelectd"
+            placeholder="请选择语言"
+            :options="state.songlistState.languageOptList"
+            labelField="name"
+            valueField="name"
+            clearable
+            @update:value="
+              state.songlistState.searchedSong = tableFilterHandler.languageSelect(
+                state.songlistState.originSong,
+                languageSelectd,
+              )
+            "
+          ></NSelect>
+          <NButton type="warning" secondary @click="tagManageModelVisible = true">
+            <template #icon>
+              <i i-ant-design-setting-outlined></i>
+            </template>
+            管理
+          </NButton>
+        </div>
+        <div class="w-20%" flex="~">
+          <NSelect
+            v-model:value="typeSelected"
+            placeholder="请选择风格"
+            :options="state.songlistState.typeOptList"
+            labelField="name"
+            valueField="name"
+            clearable
+            @update:value="
+              state.songlistState.searchedSong = tableFilterHandler.typeSelect(
+                state.songlistState.originSong,
+                typeSelected,
+              )
+            "
+          ></NSelect>
+          <NButton type="warning" secondary @click="tagManageModelVisible = true">
+            <template #icon>
+              <i i-ant-design-setting-outlined></i>
+            </template>
+            管理
+          </NButton>
+        </div>
+        <div>
+          <button
+            class="w-22px h-22px mr-30px"
+            :class="currentTheme ? 'i-uil-sun' : 'i-uil-moon'"
+            @click="switchTheme"
+          ></button>
+        </div>
       </div>
-      <div class="w-30%">
-        <NInput
-          v-model:value="searchValue"
-          :placeholder="`输入歌名或歌手搜索,总歌曲数:${state.songlistState.originSong.length || 0}`"
-        ></NInput>
-      </div>
-      <div class="w-20%" flex="~">
-        <NSelect
-          v-model:value="languageSelectd"
-          placeholder="请选择语言"
-          :options="state.songlistState.languageOptList"
-          labelField="name"
-          valueField="name"
-          clearable
-          @update:value="
-            state.songlistState.searchedSong = tableFilterHandler.languageSelect(
-              state.songlistState.originSong,
-              languageSelectd
-            )
-          "
-        ></NSelect>
-        <NButton type="warning" secondary @click="tagManageModelVisible = true">
-          <template #icon>
-            <i i-ant-design-setting-outlined></i>
-          </template>
-          管理
-        </NButton>
-      </div>
-      <div class="w-20%" flex="~">
-        <NSelect
-          v-model:value="typeSelected"
-          placeholder="请选择风格"
-          :options="state.songlistState.typeOptList"
-          labelField="name"
-          valueField="name"
-          clearable
-          @update:value="
-            state.songlistState.searchedSong = tableFilterHandler.typeSelect(
-              state.songlistState.originSong,
-              typeSelected
-            )
-          "
-        ></NSelect>
-        <NButton type="warning" secondary @click="tagManageModelVisible = true">
-          <template #icon>
-            <i i-ant-design-setting-outlined></i>
-          </template>
-          管理
-        </NButton>
+      <div flex="~">
+        <div class="m-x-3" style="color: var(--n-text-color)">勾选歌曲批量设置：</div>
+        <div class="w-10%" flex="~">
+          <NSelect
+            v-model:value="batchSetLanguage"
+            placeholder="统一设置歌曲语种"
+            :options="state.songlistState.languageOptList"
+            labelField="name"
+            valueField="name"
+            clearable
+          ></NSelect>
+        </div>
+        <div class="w-10%" flex="~">
+          <NSelect
+            v-model:value="batchSetType"
+            placeholder="统一追加歌曲风格"
+            :options="state.songlistState.typeOptList"
+            labelField="name"
+            valueField="name"
+          ></NSelect>
+        </div>
+        <div>
+          <NButton type="primary" :loading="batchLoading" class="mr-5" @click="submitBatch">
+            <template #icon>
+              <i i-ant-design-cloud-upload-outlined></i>
+            </template>
+            提交更改</NButton
+          >
+        </div>
+        <div>
+          <NButton type="error" @click="handleMultiDel">
+            <template #icon>
+              <i i-ant-design-delete-outlined></i>
+            </template>
+            删除选中歌曲
+          </NButton>
+        </div>
       </div>
     </div>
-    <div flex="~">
-      <div class="m-x-3">勾选歌曲批量设置：</div>
-      <div class="w-10%" flex="~">
-        <NSelect
-          v-model:value="batchSetLanguage"
-          placeholder="统一设置歌曲语种"
-          :options="state.songlistState.languageOptList"
-          labelField="name"
-          valueField="name"
-          clearable
-        ></NSelect>
-      </div>
-      <div class="w-10%" flex="~">
-        <NSelect
-          v-model:value="batchSetType"
-          placeholder="统一追加歌曲风格"
-          :options="state.songlistState.typeOptList"
-          labelField="name"
-          valueField="name"
-        ></NSelect>
-      </div>
-      <div>
-        <NButton type="primary" :loading="batchLoading" class="mr-5" @click="submitBatch">
-          <template #icon>
-            <i i-ant-design-cloud-upload-outlined></i>
-          </template>
-          提交更改</NButton
-        >
-      </div>
-      <div>
-        <NButton type="error" @click="handleMultiDel">
-          <template #icon>
-            <i i-ant-design-delete-outlined></i>
-          </template>
-          删除选中歌曲
-        </NButton>
-      </div>
-    </div>
-  </div>
-  <NDataTable
-    :loading="state.songlistState.songlistLoading"
-    :data="state.songlistState.searchedSong"
-    :columns="columns"
-    virtualScroll
-    :maxHeight="'88vh'"
-    :rowKey="rowData => rowData.id"
-    @update:checkedRowKeys="handleCheck"
-  ></NDataTable>
+    <NDataTable
+      :loading="state.songlistState.songlistLoading"
+      :data="state.songlistState.searchedSong"
+      :columns="columns"
+      virtualScroll
+      :maxHeight="'88vh'"
+      :rowKey="rowData => rowData.id"
+      @update:checkedRowKeys="handleCheck"
+    ></NDataTable>
+  </NLayout>
 
   <TableActionModal
     v-model:visible="actionModalVisible"
@@ -144,9 +155,20 @@ import TableActionModal from './components/TableActionModal.vue'
 import TagManageModal from './components/TagManageModal.vue'
 import { usePost } from '~/composables/request'
 import { getDataByIds } from '~/utils'
-import { useSonglistState } from '~/store'
+import { useSonglistState, useGlobalState } from '~/store'
+import { darkTheme } from 'naive-ui'
+import { currentTheme } from '~/utils'
+
+const switchTheme = () => {
+  if (currentTheme.value) {
+    currentTheme.value = null
+  } else {
+    currentTheme.value = darkTheme
+  }
+}
 
 const state = useSonglistState()
+const globalState = useGlobalState()
 state.getSonglist()
 state.getOptList()
 
@@ -215,7 +237,7 @@ const columns: DataTableColumns<SongBaseTrait> = [
           {
             default: () => '编辑',
             icon: () => h('i', { class: 'i-ant-design-edit-outlined' }),
-          }
+          },
         ),
         h(
           NPopconfirm,
@@ -243,9 +265,9 @@ const columns: DataTableColumns<SongBaseTrait> = [
                 {
                   default: () => '删除',
                   icon: () => h('i', { class: 'i-ant-design-delete-outlined' }),
-                }
+                },
               ),
-          }
+          },
         ),
       ]
     },
@@ -261,10 +283,10 @@ watchDebounced(
   () => {
     state.songlistState.searchedSong = tableFilterHandler.searchbar(
       state.songlistState.originSong,
-      searchValue.value
+      searchValue.value,
     )
   },
-  { debounce: 500, maxWait: 1500 }
+  { debounce: 500, maxWait: 1500 },
 )
 
 const batchArr = ref<Record<'songDel' | 'songUpdate', SongBaseTrait[]>>({
@@ -337,3 +359,11 @@ const submitBatch = async () => {
   state.getSonglist()
 }
 </script>
+
+<style>
+:root {
+  --n-bezier: cubic-bezier(0.4, 0, 0.2, 1);
+  --n-color: rgb(16, 16, 20);
+  --n-text-color: rgba(255, 255, 255, 0.82);
+}
+</style>
